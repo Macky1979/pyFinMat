@@ -1,0 +1,6 @@
+ent_nm,ptf,fix_type,ccy_nm,nominal,maturity_date,dcm,cpn_rate,cpn_freq,rate_mult,rate_add,crv_disc,crv_fwd
+kbc,bnd,fix,EUR,1000,20310630,ACT_360,0.01,6M,,,interbcrv_eur,
+kbc,bnd,flt,EUR,1000,20310630,ACT_360,0.01,6M,1,0.0025,interbcrv_eur,interbcrv_eur
+kbc,bnd,flt,EUR,1000,20310630,ACT_365,0.01,6M,1,0,interbcrv_eur,interbcrv_eur
+kbc,bnd,flt,EUR,1000,20310630,ACT_360,0.01,6M,1,0.02,interbcrv_eur,interbcrv_eur
+kbc,bnd,fix,EUR,1000,20310630,30_360,0.01,3M,,,interbcrv_eur,
