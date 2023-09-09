@@ -42,7 +42,7 @@ def main(main_path, crv_nms, bnd_file_nm, valuation_date, dummy_scl=1000):
     # load curves
     crvs = curves.Curves(main_path, crv_nms)
 
-    # start with time measuring
+    # start measuring time
     tic = t.time()
 
     # initiate bonds and calculate their NPV
@@ -72,8 +72,8 @@ def main(main_path, crv_nms, bnd_file_nm, valuation_date, dummy_scl=1000):
     print('total elapsed time: ' + '{:,.2f}'.format(toc) + ' s')
 
 # run code
-main_path = '//home//macky//Documents//Programming//Python//FinMat//'
-crv_nms = ['interbcrv_eur']
+main_path = '//home//macky//Documents//Programming//Python//pyFinMat//'
+crv_nms = ['interbcrv_eur', 'interbcrv_czk']
 bnd_file_nm = 'bnd_data.csv'
 valuation_date = dt.date(2023, 1, 31)
 dummy_scl=10000

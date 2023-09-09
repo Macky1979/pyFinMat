@@ -54,6 +54,16 @@ class Bond:
         bnd['crv_disc'] = 'interbcrv_eur'
         bnd['crv_fwd'] = 'interbcrv_eur'
 
+        main_path = '//home//macky//Documents//Programming//Python//pyFinMat//'
+        crv_nms = ['interbcrv_eur']
+        crvs = crv.Curves(main_path, crv_nms)
+
+        valuation_date = dt.date(2020, 1, 31)
+
+        bnd = Bond(bnd, valuation_date)
+        bnd.calc_npv(crvs)
+        print(bnd.get_npv())
+
         main_path = '//home//macky//Documents//Programming//Python//FinMat//'
         crv_nms = ['interbcrv_eur']
         crvs = crv.Curves(main_path, crv_nms)
@@ -83,7 +93,7 @@ class Bond:
         bnd['crv_disc'] = 'interbcrv_eur'
         bnd['crv_fwd'] = 'interbcrv_eur'
 
-        main_path = '//home//macky//Documents//Programming//Python//FinMat//'
+        main_path = '//home//macky//Documents//Programming//Python//pyFinMat//'
         crv_nms = ['interbcrv_eur']
         crvs = crv.Curves(main_path, crv_nms)
 
@@ -114,32 +124,26 @@ class Bond:
 
         # calculate coupon payment for fixed bonds and add nominal to the last payment
         if (self.info['fix_type'] == 'fix'):
-            self.cf = np.array(self.info['cpn_rate']) * self.yr_frac * self.info['nominal']
-            self.cf[-1] += self.info['nominal']
+            self.cfs = np.array(self.info['cpn_rate']) * self.yr_frac * self.info['nominal']
+            self.cfs[-1] += self.info['nominal']
 
 
     def calc_npv(self, crvs):
 
         # get discount factors for individual payment days
-        self.df = []
-        for idx in range(len(self.pmt_day) - 1):
-            df = crvs.get_df(self.info['crv_disc'], self.pmt_day[idx + 1])
-            self.df.append(df)
-        self.df = np.array(self.df)
+        self.dfs = crvs.get_df(self.info['crv_disc'], self.pmt_day[1:])
 
         # calculate coupon payment for floating bonds and add nominal to the last payment
-        self.fwd = [self.info['cpn_rate']]
+        self.fwds = np.array([self.info['cpn_rate']])
         if (self.info['fix_type'] != 'fix'):
-            for idx in range(len(self.pmt_day) - 2):
-                fwd = crvs.get_fwd(self.info['crv_fwd'], self.pmt_day[idx + 1], self.pmt_day[idx + 2])
-                fwd = self.info['rate_mult'] * fwd + self.info['rate_add']
-                self.fwd.append(fwd)
-            self.fwd = np.array(self.fwd)
-            self.cf = self.fwd * self.yr_frac * self.info['nominal']
-            self.cf[-1] += self.info['nominal']
+            fwds = crvs.get_fwd(self.info['crv_fwd'], self.pmt_day[1:-1], self.pmt_day[2:])
+            fwds = self.info['rate_mult'] * fwds + self.info['rate_add']
+            self.fwds = np.concatenate((self.fwds, fwds), axis=0)
+            self.cfs = self.fwds * self.yr_frac * self.info['nominal']
+            self.cfs[-1] += self.info['nominal']
 
         # discount payments
-        self.npv = np.sum(self.cf * self.df)
+        self.npv = np.sum(self.cfs * self.dfs)
 
 
     def get_npv(self):
